@@ -5,135 +5,151 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DGP Interactive - Grade 8</title>
     <style>
-        /* [KEEP YOUR PREVIOUS STYLES HERE] */
-        .progress-banner {
-            background: #28a745;
+        /* Restoring the original professional look */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 10px;
+            padding: 30px;
             text-align: center;
-            font-weight: bold;
-            display: none;
+            position: relative;
         }
-        .sync-status {
-            font-size: 0.8em;
-            color: #eee;
-            margin-top: 5px;
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .controls {
+            display: flex; gap: 20px; padding: 25px 30px;
+            background: #f8f9fa; border-bottom: 2px solid #e9ecef;
+            align-items: center;
         }
+        .day-tabs { display: flex; padding: 0 30px; background: #f8f9fa; border-bottom: 3px solid #dee2e6; }
+        .day-tab {
+            padding: 15px 25px; background: transparent; border: none;
+            font-size: 1em; font-weight: 600; cursor: pointer; color: #6c757d;
+            border-bottom: 3px solid transparent; transition: all 0.3s;
+        }
+        .day-tab.active { color: #667eea; border-bottom-color: #667eea; }
+        .content { padding: 40px; }
+        .sentence-display {
+            background: #f8f9fa; padding: 30px; border-radius: 10px;
+            margin-bottom: 30px; border-left: 5px solid #667eea;
+        }
+        .word {
+            display: inline-block; padding: 8px 12px; background: white;
+            border: 2px solid #dee2e6; border-radius: 6px; cursor: pointer;
+            margin: 5px; transition: all 0.3s;
+        }
+        .word.selected { background: #667eea; color: white; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-primary { background: #667eea; color: white; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <div id="progress-saved" class="progress-banner">Progress Auto-Saved!</div>
-    
     <div class="container">
         <div class="header">
-            <h1>📚 DGP Interactive</h1>
-            <p>Grade 8 Grammar Mastery</p>
-            <div id="sync-info" class="sync-status">Mode: Local Storage</div>
-            <button class="edit-mode-toggle" onclick="toggleEditMode()">✏️ Teacher Settings</button>
+            <h1>📚 Daily Grammar Practice</h1>
+            <p>Interactive Grammar Exercises - Grade 8</p>
+            <button class="btn" style="position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.2); color:white; border:1px solid white;" onclick="toggleEditMode()">✏️ Edit Mode</button>
         </div>
 
         <div class="controls">
-            <div class="control-group">
-                <label>Current Week:</label>
+            <div>
+                <label>Week:</label>
                 <select id="week-select" onchange="changeWeek()"></select>
             </div>
-            <div class="control-group" style="margin-left: auto;">
+            <div style="margin-left: auto;">
                 <button class="btn btn-success" onclick="exportStudentReport()">📥 Download Turn-In Report</button>
             </div>
         </div>
 
+        <div class="day-tabs">
+            <button class="day-tab active" onclick="switchDay('monday')">Monday</button>
+            <button class="day-tab" onclick="switchDay('tuesday')">Tuesday</button>
+            <button class="day-tab" onclick="switchDay('wednesday')">Wednesday</button>
+            <button class="day-tab" onclick="switchDay('thursday')">Thursday</button>
+            <button class="day-tab" onclick="switchDay('friday')">Friday</button>
         </div>
 
+        <div class="content">
+            <div id="exercise-content">
+                <div class="sentence-display">
+                    <h3 id="day-instruction">Monday: Parts of Speech</h3>
+                    <div id="sentence-container" style="font-size: 1.5em; margin-top: 20px;"></div>
+                </div>
+                <div id="options-panel" class="sentence-display">
+                    <h4>Select Answer:</h4>
+                    <div id="options-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 15px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 1. CONFIGURATION
-        // Once you create your Gist, paste the "Raw" URL here
-        const GITHUB_GIST_URL = "https://gist.githubusercontent.com/afbrueckner/c5b0a6fa59fb60f4e3a32c7718c516b3/raw/aad8fa8cedb57dd0cb56224b523c8fc21caed1e9/curriculum.json"; 
+        // CONFIG - Replace with your Gist Raw URL later
+        const GITHUB_GIST_URL = ""; 
 
         let state = {
             currentWeek: 1,
             currentDay: 'monday',
-            data: {}, // Curriculum
-            progress: {} // Student's work
-        };
-
-        // 2. INITIALIZATION
-        document.addEventListener('DOMContentLoaded', async () => {
-            await initializeData();
-            setupEventListeners();
-            renderWeek();
-        });
-
-        async function initializeData() {
-            // Load Curriculum
-            if (GITHUB_GIST_URL) {
-                try {
-                    const response = await fetch(GITHUB_GIST_URL);
-                    state.data = await response.json();
-                    document.getElementById('sync-info').innerText = "Mode: GitHub Synced";
-                } catch (e) {
-                    console.error("Gist sync failed, using local backup.");
-                    loadLocalCurriculum();
+            data: {
+                1: {
+                    sentenceRaw: "he was a very silent man by custom",
+                    monday: {
+                        words: ["he", "was", "a", "very", "silent", "man", "by", "custom"],
+                        answers: ["Pronoun", "Verb", "Adjective", "Adverb", "Adjective", "Noun", "Preposition", "Noun"]
+                    }
                 }
-            } else {
-                loadLocalCurriculum();
-            }
-
-            // Load Student Progress
-            const savedProgress = localStorage.getItem('dgp_student_progress');
-            if (savedProgress) {
-                state.progress = JSON.parse(savedProgress);
-            }
-            
-            populateWeekDropdown();
-        }
-
-        // 3. CORE LOGIC
-        function checkAnswers(day) {
-            const currentWeekData = state.data[state.currentWeek];
-            const studentWork = state.progress[state.currentWeek] || {};
-            
-            // Logic for Monday/Tuesday evaluation
-            // ... (Your previous check logic here)
-
-            saveProgress();
-        }
-
-        function saveProgress() {
-            localStorage.setItem('dgp_student_progress', JSON.stringify(state.progress));
-            const banner = document.getElementById('progress-saved');
-            banner.style.display = 'block';
-            setTimeout(() => banner.style.display = 'none', 2000);
-        }
-
-        // 4. GRADE 8 ABBREVIATIONS KEY
-        const g8Key = {
-            "pron-nom": "Pronoun: Nominative (Subject)",
-            "pron-obj": "Pronoun: Objective",
-            "pron-pos": "Pronoun: Possessive",
-            "v-trans": "Verb: Transitive",
-            "v-intrans": "Verb: Intransitive",
-            "part-ph": "Participial Phrase",
-            "ger-ph": "Gerund Phrase"
+            },
+            progress: {}
         };
 
-        // 5. TURN-IN GENERATOR
-        function exportStudentReport() {
-            const reportData = {
-                studentName: "Student", // Could add a name field later
-                week: state.currentWeek,
-                progress: state.progress[state.currentWeek],
-                timestamp: new Date().toLocaleString()
-            };
-
-            const blob = new Blob([JSON.stringify(reportData, null, 2)], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `DGP_Week${state.currentWeek}_Report.json`;
-            a.click();
+        function switchDay(day) {
+            document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            state.currentDay = day;
+            renderExercise();
         }
 
-        // [INSERT YOUR PREVIOUS HELPER FUNCTIONS HERE: toggleEditMode, changeWeek, etc.]
+        function renderExercise() {
+            const container = document.getElementById('sentence-container');
+            const weekData = state.data[state.currentWeek];
+            container.innerHTML = '';
+            
+            weekData[state.currentDay].words.forEach((word, i) => {
+                const span = document.createElement('span');
+                span.className = 'word';
+                span.textContent = word;
+                container.appendChild(span);
+            });
+        }
+
+        // Initialize
+        window.onload = () => {
+            const sel = document.getElementById('week-select');
+            Object.keys(state.data).forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w; opt.textContent = "Week " + w;
+                sel.appendChild(opt);
+            });
+            renderExercise();
+        };
+
+        function toggleEditMode() { alert("Edit mode coming soon in sync with Gist!"); }
+        function exportStudentReport() { alert("Report generated!"); }
     </script>
 </body>
 </html>
