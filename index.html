@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DGP Interactive - Grade 8</title>
+    <style>
+        /* [KEEP YOUR PREVIOUS STYLES HERE] */
+        .progress-banner {
+            background: #28a745;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        .sync-status {
+            font-size: 0.8em;
+            color: #eee;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="progress-saved" class="progress-banner">Progress Auto-Saved!</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>📚 DGP Interactive</h1>
+            <p>Grade 8 Grammar Mastery</p>
+            <div id="sync-info" class="sync-status">Mode: Local Storage</div>
+            <button class="edit-mode-toggle" onclick="toggleEditMode()">✏️ Teacher Settings</button>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Current Week:</label>
+                <select id="week-select" onchange="changeWeek()"></select>
+            </div>
+            <div class="control-group" style="margin-left: auto;">
+                <button class="btn btn-success" onclick="exportStudentReport()">📥 Download Turn-In Report</button>
+            </div>
+        </div>
+
+        </div>
+
+    <script>
+        // 1. CONFIGURATION
+        // Once you create your Gist, paste the "Raw" URL here
+        const GITHUB_GIST_URL = ""; 
+
+        let state = {
+            currentWeek: 1,
+            currentDay: 'monday',
+            data: {}, // Curriculum
+            progress: {} // Student's work
+        };
+
+        // 2. INITIALIZATION
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeData();
+            setupEventListeners();
+            renderWeek();
+        });
+
+        async function initializeData() {
+            // Load Curriculum
+            if (GITHUB_GIST_URL) {
+                try {
+                    const response = await fetch(GITHUB_GIST_URL);
+                    state.data = await response.json();
+                    document.getElementById('sync-info').innerText = "Mode: GitHub Synced";
+                } catch (e) {
+                    console.error("Gist sync failed, using local backup.");
+                    loadLocalCurriculum();
+                }
+            } else {
+                loadLocalCurriculum();
+            }
+
+            // Load Student Progress
+            const savedProgress = localStorage.getItem('dgp_student_progress');
+            if (savedProgress) {
+                state.progress = JSON.parse(savedProgress);
+            }
+            
+            populateWeekDropdown();
+        }
+
+        // 3. CORE LOGIC
+        function checkAnswers(day) {
+            const currentWeekData = state.data[state.currentWeek];
+            const studentWork = state.progress[state.currentWeek] || {};
+            
+            // Logic for Monday/Tuesday evaluation
+            // ... (Your previous check logic here)
+
+            saveProgress();
+        }
+
+        function saveProgress() {
+            localStorage.setItem('dgp_student_progress', JSON.stringify(state.progress));
+            const banner = document.getElementById('progress-saved');
+            banner.style.display = 'block';
+            setTimeout(() => banner.style.display = 'none', 2000);
+        }
+
+        // 4. GRADE 8 ABBREVIATIONS KEY
+        const g8Key = {
+            "pron-nom": "Pronoun: Nominative (Subject)",
+            "pron-obj": "Pronoun: Objective",
+            "pron-pos": "Pronoun: Possessive",
+            "v-trans": "Verb: Transitive",
+            "v-intrans": "Verb: Intransitive",
+            "part-ph": "Participial Phrase",
+            "ger-ph": "Gerund Phrase"
+        };
+
+        // 5. TURN-IN GENERATOR
+        function exportStudentReport() {
+            const reportData = {
+                studentName: "Student", // Could add a name field later
+                week: state.currentWeek,
+                progress: state.progress[state.currentWeek],
+                timestamp: new Date().toLocaleString()
+            };
+
+            const blob = new Blob([JSON.stringify(reportData, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `DGP_Week${state.currentWeek}_Report.json`;
+            a.click();
+        }
+
+        // [INSERT YOUR PREVIOUS HELPER FUNCTIONS HERE: toggleEditMode, changeWeek, etc.]
+    </script>
+</body>
+</html>
