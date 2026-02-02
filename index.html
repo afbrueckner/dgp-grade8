@@ -1,173 +1,1024 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Grammar Practice - Interactive (Grade 8)</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; position: relative; }
-        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
-        .header p { font-size: 1.1em; opacity: 0.9; }
-        .edit-mode-toggle { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: 2px solid white; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
-        .edit-mode-toggle:hover { background: white; color: #667eea; }
-        .controls { display: flex; gap: 20px; padding: 25px 30px; background: #f8f9fa; border-bottom: 2px solid #e9ecef; flex-wrap: wrap; align-items: center; }
-        .control-group { display: flex; flex-direction: column; gap: 8px; }
-        .control-group label { font-weight: 600; font-size: 0.9em; color: #495057; }
-        select, input, textarea { padding: 10px 15px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 1em; background: white; font-family: inherit; }
-        .day-tabs { display: flex; gap: 0; padding: 0 30px; background: #f8f9fa; border-bottom: 3px solid #dee2e6; overflow-x: auto; }
-        .day-tab { padding: 15px 25px; background: transparent; border: none; font-size: 1em; font-weight: 600; cursor: pointer; color: #6c757d; border-bottom: 3px solid transparent; transition: all 0.3s; white-space: nowrap; }
-        .day-tab.active { color: #667eea; border-bottom-color: #667eea; }
-        .content { padding: 40px; }
-        .sentence-display { background: #f8f9fa; padding: 30px; border-radius: 10px; margin-bottom: 30px; border-left: 5px solid #667eea; }
-        .sentence { font-size: 1.5em; line-height: 2.5; color: #212529; display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
-        .word { padding: 8px 12px; background: white; border: 2px solid #dee2e6; border-radius: 6px; cursor: pointer; transition: all 0.3s; position: relative; margin-top: 30px; }
-        .word.selected { background: #667eea; color: white; border-color: #667eea; }
-        .word .label { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); font-size: 0.6em; background: #667eea; color: white; padding: 4px 8px; border-radius: 4px; white-space: nowrap; font-weight: 600; }
-        .options-panel { background: white; border: 2px solid #dee2e6; border-radius: 10px; padding: 25px; margin-bottom: 25px; }
-        .options-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
-        .option-btn { padding: 12px 20px; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; font-size: 0.95em; cursor: pointer; transition: all 0.3s; font-weight: 500; text-align: left; }
-        .option-btn:hover { background: #667eea; color: white; }
-        .action-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
-        .btn { padding: 12px 30px; border: none; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-        .btn-primary { background: #667eea; color: white; }
-        .btn-secondary { background: #6c757d; color: white; }
-        .btn-success { background: #28a745; color: white; }
-        .feedback { padding: 20px; border-radius: 8px; margin-top: 20px; font-size: 1.1em; font-weight: 500; }
-        .feedback.success { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
-        .instructions { background: #e7f3ff; border-left: 4px solid #2196F3; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
-        .hidden { display: none; }
-        canvas { border: 2px solid #dee2e6; border-radius: 8px; background: white; cursor: crosshair; display: block; margin: 20px auto; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daily Grammar Practice - Interactive (Grade 8)</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #212529;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+      position: relative;
+    }
+    .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+    .header p { font-size: 1.1em; opacity: 0.9; }
+    .edit-mode-toggle {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid white;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .edit-mode-toggle:hover { background: white; color: #667eea; }
+
+    .controls {
+      display: flex;
+      gap: 20px;
+      padding: 25px 30px;
+      background: #f8f9fa;
+      border-bottom: 2px solid #e9ecef;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .control-group label {
+      font-weight: 600;
+      font-size: 0.9em;
+      color: #495057;
+    }
+    select, input, textarea {
+      padding: 10px 15px;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      font-size: 1em;
+      background: white;
+      font-family: inherit;
+    }
+    select:hover, select:focus, input:hover, input:focus, textarea:hover, textarea:focus {
+      border-color: #667eea;
+      outline: none;
+    }
+
+    .day-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 30px;
+      background: #f8f9fa;
+      border-bottom: 3px solid #dee2e6;
+      overflow-x: auto;
+    }
+    .day-tab {
+      padding: 15px 25px;
+      background: transparent;
+      border: none;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      color: #6c757d;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -3px;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+    .day-tab:hover { color: #667eea; }
+    .day-tab.active { color: #667eea; border-bottom-color: #667eea; }
+
+    .content { padding: 40px; }
+    .sentence-display {
+      background: #f8f9fa;
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      border-left: 5px solid #667eea;
+    }
+    .sentence-display h3 { color: #495057; margin-bottom: 20px; font-size: 1.3em; }
+    .sentence {
+      font-size: 1.5em;
+      line-height: 2.5;
+      color: #212529;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .word {
+      padding: 8px 14px;
+      background: white;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .word:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102,126,234,0.2);
+    }
+    .word.selected {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+    .word.correct { background: #28a745; color: white; border-color: #28a745; }
+    .word.incorrect { background: #dc3545; color: white; border-color: #dc3545; }
+    .word .label {
+      position: absolute;
+      top: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.65em;
+      background: #667eea;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 4px;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    .options-panel {
+      background: white;
+      border: 2px solid #dee2e6;
+      border-radius: 10px;
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+    .options-panel h4 { color: #495057; margin-bottom: 15px; font-size: 1.2em; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .option-btn {
+      padding: 12px 20px;
+      background: #f8f9fa;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      font-size: 0.95em;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+      text-align: left;
+    }
+    .option-btn:hover {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+      transform: translateY(-2px);
+    }
+    .option-btn.selected {
+      background: #28a745;
+      color: white;
+      border-color: #28a745;
+    }
+
+    .action-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary { background: #667eea; color: white; }
+    .btn-primary:hover { background: #5568d3; }
+    .btn-secondary { background: #6c757d; color: white; }
+    .btn-secondary:hover { background: #5a6268; }
+    .btn-success { background: #28a745; color: white; }
+    .btn-success:hover { background: #218838; }
+
+    .feedback {
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-size: 1.1em;
+      font-weight: 500;
+    }
+    .feedback.success { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
+    .feedback.error   { background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
+    .feedback.partial { background: #fff3cd; color: #856404; border: 2px solid #ffeaa7; }
+
+    .instructions {
+      background: #e7f3ff;
+      border-left: 4px solid #2196F3;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+    }
+
+    .hidden { display: none; }
+
+    .editor-panel {
+      background: #fff3cd;
+      border: 3px solid #ffc107;
+      border-radius: 10px;
+      padding: 25px;
+      margin: 0 30px 25px;
+    }
+    .editor-field { margin-bottom: 20px; }
+    .editor-field label { display: block; font-weight: 600; margin-bottom: 8px; color: #495057; }
+    .editor-field input, .editor-field textarea { width: 100%; }
+    .editor-field textarea { min-height: 100px; resize: vertical; }
+
+    canvas {
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      background: white;
+      cursor: crosshair;
+      display: block;
+      margin: 20px auto;
+      width: 100%;
+      max-width: 900px;
+      height: auto;
+      aspect-ratio: 2 / 1;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 { font-size: 1.9em; }
+      .sentence { font-size: 1.25em; line-height: 2; }
+      .controls { flex-direction: column; align-items: stretch; }
+      .edit-mode-toggle { position: static; margin: 15px 0; width: 100%; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📚 Daily Grammar Practice</h1>
-            <p>Interactive Grammar Exercises - Grade 8</p>
-            <button class="edit-mode-toggle" onclick="toggleEditMode()">✏️ Edit Sentences</button>
-        </div>
-        <div class="controls">
-            <div class="control-group">
-                <label for="week-select">Week:</label>
-                <select id="week-select" onchange="changeWeek()"></select>
-            </div>
-        </div>
-        <div class="day-tabs">
-            <button class="day-tab active" data-day="monday" onclick="switchDay('monday')">Monday</button>
-            <button class="day-tab" data-day="tuesday" onclick="switchDay('tuesday')">Tuesday</button>
-            <button class="day-tab" data-day="wednesday" onclick="switchDay('wednesday')">Wednesday</button>
-            <button class="day-tab" data-day="thursday" onclick="switchDay('thursday')">Thursday</button>
-            <button class="day-tab" data-day="friday" onclick="switchDay('friday')">Friday</button>
-        </div>
-        <div class="content">
-            <div id="exercise-area">
-                <div class="sentence-display">
-                    <h3 id="current-day-title">Monday - Parts of Speech</h3>
-                    <div class="sentence" id="sentence-box"></div>
-                </div>
-                <div id="options-panel" class="options-panel">
-                    <h4 id="option-title">Select Answer:</h4>
-                    <div class="options-grid" id="options-grid"></div>
-                </div>
-                <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="checkAnswers()">Check Answers</button>
-                    <button class="btn btn-secondary" onclick="resetDay()">Reset</button>
-                </div>
-                <div id="feedback" class="feedback hidden"></div>
-            </div>
-            <div id="friday-area" class="hidden">
-                <canvas id="diagram-canvas" width="800" height="400"></canvas>
-            </div>
-        </div>
+
+<div class="container">
+  <div class="header">
+    <h1>📚 Daily Grammar Practice</h1>
+    <p>Interactive Grammar Exercises - Grade 8</p>
+    <button class="edit-mode-toggle" onclick="toggleEditMode()">✏️ Edit Sentences</button>
+  </div>
+
+  <div class="controls">
+    <div class="control-group">
+      <label for="week-select">Week:</label>
+      <select id="week-select" onchange="changeWeek()"></select>
+    </div>
+  </div>
+
+  <!-- Edit Mode Panel -->
+  <div id="edit-panel" class="editor-panel hidden">
+    <h3>✏️ Edit Week <span id="edit-week-num"></span> Data</h3>
+
+    <div class="editor-field">
+      <label>Base Sentence (NO punctuation or capitalization):</label>
+      <input type="text" id="edit-sentence-raw" placeholder="he was a very silent man by custom">
+      <small>Type the sentence in all lowercase with no punctuation</small>
     </div>
 
+    <div class="editor-field">
+      <label>Correctly Punctuated & Capitalized Sentence (for Thursday):</label>
+      <input type="text" id="edit-sentence-correct" placeholder="He was a very silent man by custom.">
+    </div>
+
+    <div class="editor-field">
+      <label>Monday - Parts of Speech Abbreviations (comma-separated):</label>
+      <textarea id="edit-monday" placeholder="pron pro, lv, art, adv, adj, N, prep, op"></textarea>
+      <small>Use DGP abbreviations: pron pro, lv, art, adv, adj, N, prep, op, av, etc.</small>
+    </div>
+
+    <div class="editor-field">
+      <label>Tuesday - Sentence Parts (phrases separated by |):</label>
+      <textarea id="edit-tuesday-phrases" placeholder="he | was | a very silent man | by custom"></textarea>
+      <textarea id="edit-tuesday-labels" placeholder="S, lv, PN, adv prep ph"></textarea>
+      <small>Use abbreviations: S, lv, PN, adv prep ph, etc.</small>
+    </div>
+
+    <div class="editor-field">
+      <label>Wednesday - Sentence Type & Purpose:</label>
+      <select id="edit-sentence-type">
+        <option value="simple">Simple</option>
+        <option value="compound">Compound</option>
+        <option value="complex">Complex</option>
+        <option value="compound-complex">Compound-Complex</option>
+      </select>
+      <select id="edit-purpose" style="margin-top:10px;">
+        <option value="declarative">Declarative</option>
+        <option value="interrogative">Interrogative</option>
+        <option value="exclamatory">Exclamatory</option>
+        <option value="imperative">Imperative</option>
+      </select>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn btn-success" onclick="saveWeekData()">💾 Save Week Data</button>
+      <button class="btn btn-secondary" onclick="toggleEditMode()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="day-tabs">
+    <button class="day-tab active" data-day="monday">Monday<br><small>Parts of Speech</small></button>
+    <button class="day-tab" data-day="tuesday">Tuesday<br><small>Sentence Parts</small></button>
+    <button class="day-tab" data-day="wednesday">Wednesday<br><small>Clauses & Type</small></button>
+    <button class="day-tab" data-day="thursday">Thursday<br><small>Punctuation</small></button>
+    <button class="day-tab" data-day="friday">Friday<br><small>Diagram</small></button>
+  </div>
+
+  <div class="content">
+    <!-- Monday -->
+    <div id="monday-content" class="day-content">
+      <div class="instructions">
+        <h4>📝 Monday - Parts of Speech</h4>
+        <p>Click a word, then select its part of speech.</p>
+      </div>
+      <div class="sentence-display">
+        <h3>This week's sentence (no caps/punctuation):</h3>
+        <div class="sentence" id="sentence-monday"></div>
+      </div>
+      <div class="options-panel">
+        <h4>Select part of speech:</h4>
+        <div class="options-grid" id="pos-options"></div>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="checkAnswers('monday')">Check Answers</button>
+        <button class="btn btn-secondary" onclick="resetDay('monday')">Reset</button>
+        <button class="btn btn-success" onclick="showAnswers('monday')">Show Answers</button>
+      </div>
+      <div id="feedback-monday" class="feedback"></div>
+    </div>
+
+    <!-- Tuesday -->
+    <div id="tuesday-content" class="day-content hidden">
+      <div class="instructions">
+        <h4>📝 Tuesday - Sentence Parts</h4>
+        <p>Click a phrase, then select its sentence part/role.</p>
+      </div>
+      <div class="sentence-display">
+        <h3>This week's sentence (no caps/punctuation):</h3>
+        <div class="sentence" id="sentence-tuesday"></div>
+      </div>
+      <div class="options-panel">
+        <h4>Select sentence part:</h4>
+        <div class="options-grid" id="sentence-parts-options"></div>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="checkAnswers('tuesday')">Check Answers</button>
+        <button class="btn btn-secondary" onclick="resetDay('tuesday')">Reset</button>
+        <button class="btn btn-success" onclick="showAnswers('tuesday')">Show Answers</button>
+      </div>
+      <div id="feedback-tuesday" class="feedback"></div>
+    </div>
+
+    <!-- Wednesday -->
+    <div id="wednesday-content" class="day-content hidden">
+      <div class="instructions">
+        <h4>📝 Wednesday - Clauses and Sentence Type</h4>
+        <p>Select the sentence type and purpose.<br>(Sentence shown without capitalization or punctuation)</p>
+      </div>
+      <div class="sentence-display">
+        <h3>This week's sentence (no caps/punctuation):</h3>
+        <div style="font-size:1.3em; color:#495057; padding:20px;" id="sentence-wednesday"></div>
+      </div>
+      <div class="options-panel">
+        <h4>Sentence Type:</h4>
+        <div class="options-grid">
+          <button class="option-btn" data-type="simple">Simple</button>
+          <button class="option-btn" data-type="compound">Compound</button>
+          <button class="option-btn" data-type="complex">Complex</button>
+          <button class="option-btn" data-type="compound-complex">Compound-Complex</button>
+        </div>
+        <h4 style="margin-top:20px;">Purpose:</h4>
+        <div class="options-grid">
+          <button class="option-btn" data-purpose="declarative">Declarative</button>
+          <button class="option-btn" data-purpose="interrogative">Interrogative</button>
+          <button class="option-btn" data-purpose="exclamatory">Exclamatory</button>
+          <button class="option-btn" data-purpose="imperative">Imperative</button>
+        </div>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="checkAnswers('wednesday')">Check Answers</button>
+        <button class="btn btn-secondary" onclick="resetDay('wednesday')">Reset</button>
+        <button class="btn btn-success" onclick="showAnswers('wednesday')">Show Answers</button>
+      </div>
+      <div id="feedback-wednesday" class="feedback"></div>
+    </div>
+
+    <!-- Thursday -->
+    <div id="thursday-content" class="day-content hidden">
+      <div class="instructions">
+        <h4>📝 Thursday - Punctuation and Capitalization</h4>
+        <p>Type the sentence with correct capitalization and punctuation.</p>
+      </div>
+      <div class="sentence-display">
+        <h3>Original sentence (no punctuation/caps):</h3>
+        <div style="font-size:1.3em; color:#495057; margin-top:15px;" id="unpunctuated-sentence"></div>
+      </div>
+      <div class="options-panel">
+        <h4>Your corrected version:</h4>
+        <textarea id="punctuation-input" style="width:100%; min-height:120px; font-size:1.1em; padding:15px;" placeholder="Type here..."></textarea>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="checkAnswers('thursday')">Check Answer</button>
+        <button class="btn btn-secondary" onclick="resetDay('thursday')">Reset</button>
+        <button class="btn btn-success" onclick="showAnswers('thursday')">Show Answer</button>
+      </div>
+      <div id="feedback-thursday" class="feedback"></div>
+    </div>
+
+    <!-- Friday -->
+    <div id="friday-content" class="day-content hidden">
+      <div class="instructions">
+        <h4>📝 Friday - Diagram the Sentence</h4>
+        <p>Draw your diagram below. Use "Draw Line" or "Add Text".</p>
+      </div>
+      <div class="sentence-display">
+        <h3>Correct sentence (for reference):</h3>
+        <div style="font-size:1.3em; color:#495057; margin-top:15px; font-style:italic;" id="reference-sentence"></div>
+      </div>
+      <div class="options-panel">
+        <h4>Diagram Tools:</h4>
+        <div style="margin-bottom:15px;">
+          <button class="btn btn-secondary" onclick="setDrawMode('line')">Draw Line</button>
+          <button class="btn btn-secondary" onclick="setDrawMode('text')">Add Text</button>
+          <button class="btn btn-warning" onclick="clearCanvas()">Clear</button>
+          <button class="btn btn-success" onclick="saveCanvas()">Save Diagram</button>
+        </div>
+        <canvas id="diagram-canvas"></canvas>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-success" onclick="showAnswers('friday')">Show Example Description</button>
+      </div>
+      <div id="feedback-friday" class="feedback"></div>
+      <div id="example-diagram" class="hidden" style="margin-top:25px; padding:20px; background:#f8f9fa; border-radius:8px;">
+        <h4>Example Diagram Description:</h4>
+        <div id="diagram-example-text"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-    const posAbbreviations = { "pron pro": "Pronoun (personal)", "lv": "Linking verb", "av": "Action verb", "hv": "Helping verb", "art": "Article", "adv": "Adverb", "adj": "Adjective", "N": "Noun", "prep": "Preposition", "op": "Object of preposition" };
-    
-    let sentenceData = {
-        1: {
-            words: ["he", "was", "a", "very", "silent", "man", "by", "custom"],
-            answers: ["pron pro", "lv", "art", "adv", "adj", "N", "prep", "op"]
-        }
+// ────────────────────────────────────────────────
+// Data & State
+// ────────────────────────────────────────────────
+
+const posAbbreviations = {
+  "pron pro": "Pronoun (personal)", "lv": "Linking verb", "av": "Action verb",
+  "hv": "Helping verb", "art": "Article", "adv": "Adverb", "adj": "Adjective",
+  "N": "Noun", "prep": "Preposition", "op": "Object of preposition",
+  "cc": "Coordinating conjunction", "sc": "Subordinating conjunction",
+  "int": "Interjection", "inf": "Infinitive", "ger": "Gerund", "part": "Participle"
+};
+
+const sentencePartsAbbrev = {
+  "S": "Subject (simple)", "CS": "Complete subject", "lv": "Linking verb",
+  "av": "Action verb", "vp": "Verb phrase", "PN": "Predicate nominative",
+  "PA": "Predicate adjective", "DO": "Direct object", "IO": "Indirect object",
+  "adv prep ph": "Adverbial prep phrase", "adj prep ph": "Adjectival prep phrase",
+  "op": "Object of preposition", "inf ph": "Infinitive phrase",
+  "ger ph": "Gerund phrase", "part ph": "Participial phrase"
+};
+
+let sentenceData = {};
+let currentWeek = 1;
+let currentDay = 'monday';
+let selectedWord = null;
+let userAnswers = {};
+let selectedType = null;
+let selectedPurpose = null;
+let editMode = false;
+
+// Canvas
+let canvas, ctx, drawMode = null, isDrawing = false, lastX = 0, lastY = 0;
+
+function loadSentenceData() {
+  const saved = localStorage.getItem('dgpSentenceData');
+  if (saved) {
+    sentenceData = JSON.parse(saved);
+  } else {
+    // Default data — all raw sentences are lowercase, no punctuation
+    sentenceData = {
+      1: {
+        sentenceRaw: "he was a very silent man by custom",
+        sentenceCorrect: "He was a very silent man by custom.",
+        monday: { words: ["he","was","a","very","silent","man","by","custom"], answers: ["pron pro","lv","art","adv","adj","N","prep","op"] },
+        tuesday: { words: ["he","was","a very silent man","by custom"], answers: ["S","lv","PN","adv prep ph"], labels: ["S","lv","PN","adv prep ph"] },
+        wednesday: { sentenceType: "simple", purpose: "declarative" },
+        thursday: { unpunctuated: "he was a very silent man by custom", correct: "He was a very silent man by custom." },
+        friday: { diagramDescription: "Subject 'He' left side → linking verb 'was' → predicate nominative 'man' on right. Modifiers under 'man'. Prep phrase 'by custom' slanted under 'man'." }
+      }
+      // Add more weeks here as needed — keep sentenceRaw lowercase/no punctuation
     };
+    saveSentenceData();
+  }
+}
 
-    let currentWeek = 1;
-    let currentDay = 'monday';
-    let selectedWordIdx = null;
-    let studentAnswers = {};
+function saveSentenceData() {
+  localStorage.setItem('dgpSentenceData', JSON.stringify(sentenceData));
+}
 
-    window.onload = function() {
-        const sel = document.getElementById('week-select');
-        Object.keys(sentenceData).forEach(w => {
-            let opt = document.createElement('option');
-            opt.value = w; opt.textContent = "Week " + w;
-            sel.appendChild(opt);
-        });
-        renderSentence();
-        renderOptions();
-    };
+function normalize(str) {
+  return str.trim().toLowerCase().replace(/\s+/g, ' ');
+}
 
-    function renderSentence() {
-        const box = document.getElementById('sentence-box');
-        box.innerHTML = '';
-        sentenceData[currentWeek].words.forEach((word, i) => {
-            const span = document.createElement('span');
-            span.className = 'word' + (selectedWordIdx === i ? ' selected' : '');
-            span.textContent = word;
-            if(studentAnswers[i]) {
-                const lbl = document.createElement('div');
-                lbl.className = 'label';
-                lbl.textContent = studentAnswers[i];
-                span.appendChild(lbl);
-            }
-            span.onclick = () => { selectedWordIdx = i; renderSentence(); };
-            box.appendChild(span);
-        });
-    }
+// ────────────────────────────────────────────────
+// Init
+// ────────────────────────────────────────────────
 
-    function renderOptions() {
-        const grid = document.getElementById('options-grid');
-        grid.innerHTML = '';
-        Object.keys(posAbbreviations).forEach(key => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerHTML = `${posAbbreviations[key]}<br><small>${key}</small>`;
-            btn.onclick = () => {
-                if(selectedWordIdx !== null) {
-                    studentAnswers[selectedWordIdx] = key;
-                    renderSentence();
-                }
-            };
-            grid.appendChild(btn);
-        });
-    }
+document.addEventListener('DOMContentLoaded', () => {
+  loadSentenceData();
+  populateWeekSelector();
+  setupCanvas();
+  setupEventListeners();
+  loadWeek(currentWeek);
+});
 
-    function switchDay(day) {
-        currentDay = day;
-        document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
-        document.querySelector(`[data-day="${day}"]`).classList.add('active');
-        if(day === 'friday') {
-            document.getElementById('exercise-area').classList.add('hidden');
-            document.getElementById('friday-area').classList.remove('hidden');
-        } else {
-            document.getElementById('exercise-area').classList.remove('hidden');
-            document.getElementById('friday-area').classList.add('hidden');
+// ────────────────────────────────────────────────
+// Canvas Setup & Drawing
+// ────────────────────────────────────────────────
+
+function setupCanvas() {
+  canvas = document.getElementById('diagram-canvas');
+  ctx = canvas.getContext('2d');
+  resizeCanvas();
+
+  const events = [
+    ['mousedown', startDrawing],
+    ['mousemove', draw],
+    ['mouseup', stopDrawing],
+    ['mouseout', stopDrawing],
+    ['touchstart', e => { e.preventDefault(); startDrawing(e.touches[0]); }],
+    ['touchmove', e => { e.preventDefault(); draw(e.touches[0]); }],
+    ['touchend', stopDrawing],
+    ['click', addText]
+  ];
+
+  events.forEach(([ev, fn]) => canvas.addEventListener(ev, fn));
+}
+
+function resizeCanvas() {
+  const w = Math.min(canvas.parentElement.clientWidth - 40, 900);
+  canvas.width = w;
+  canvas.height = w * 0.5;
+}
+
+window.addEventListener('resize', resizeCanvas);
+
+function setDrawMode(mode) {
+  drawMode = mode;
+  canvas.style.cursor = mode === 'line' ? 'crosshair' : mode === 'text' ? 'text' : 'default';
+}
+
+function startDrawing(e) {
+  if (drawMode !== 'line') return;
+  isDrawing = true;
+  const rect = canvas.getBoundingClientRect();
+  lastX = e.clientX - rect.left;
+  lastY = e.clientY - rect.top;
+}
+
+function draw(e) {
+  if (!isDrawing || drawMode !== 'line') return;
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(x, y);
+  ctx.strokeStyle = '#212529';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  lastX = x; lastY = y;
+}
+
+function stopDrawing() { isDrawing = false; }
+
+function addText(e) {
+  if (drawMode !== 'text') return;
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const text = prompt('Enter text for diagram:');
+  if (text) {
+    ctx.font = '16px Arial';
+    ctx.fillStyle = '#212529';
+    ctx.fillText(text, x, y);
+  }
+}
+
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function saveCanvas() {
+  const link = document.createElement('a');
+  link.download = `week-${currentWeek}-diagram.png`;
+  link.href = canvas.toDataURL();
+  link.click();
+}
+
+// ────────────────────────────────────────────────
+// UI Logic
+// ────────────────────────────────────────────────
+
+function populateWeekSelector() {
+  const select = document.getElementById('week-select');
+  select.innerHTML = '';
+  for (let i = 1; i <= 30; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `Week ${i}${!sentenceData[i] ? ' (empty)' : ''}`;
+    select.appendChild(opt);
+  }
+  select.value = currentWeek;
+}
+
+function changeWeek() {
+  currentWeek = parseInt(document.getElementById('week-select').value);
+  switchDay('monday');
+  loadWeek(currentWeek);
+}
+
+function switchDay(day) {
+  currentDay = day;
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`[data-day="${day}"]`).classList.add('active');
+
+  document.querySelectorAll('.day-content').forEach(c => c.classList.add('hidden'));
+  document.getElementById(`${day}-content`).classList.remove('hidden');
+
+  loadDay(day);
+}
+
+function loadWeek(week) {
+  userAnswers = {};
+  selectedWord = null;
+  selectedType = null;
+  selectedPurpose = null;
+  loadDay(currentDay);
+  if (editMode) loadEditPanel();
+}
+
+function loadDay(day) {
+  const data = sentenceData[currentWeek] || createEmptyWeek();
+  document.getElementById(`feedback-${day}`).innerHTML = '';
+
+  switch(day) {
+    case 'monday':    loadMonday(data);    break;
+    case 'tuesday':   loadTuesday(data);   break;
+    case 'wednesday': loadWednesday(data); break;
+    case 'thursday':  loadThursday(data);  break;
+    case 'friday':    loadFriday(data);    break;
+  }
+}
+
+function renderWords(containerId, words, day) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  words.forEach((text, i) => {
+    const clean = text.replace(/[()]/g, '').trim();
+    if (!clean) return;
+    const span = document.createElement('span');
+    span.className = 'word';
+    span.textContent = clean;
+    span.dataset.index = i;
+    span.addEventListener('click', () => selectWord(i, day));
+    container.appendChild(span);
+  });
+}
+
+function loadMonday(data) {
+  renderWords('sentence-monday', data.monday?.words || [], 'monday');
+  const opts = document.getElementById('pos-options');
+  opts.innerHTML = '';
+  Object.entries(posAbbreviations).forEach(([abbrev, full]) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<strong>${abbrev}</strong><small>${full}</small>`;
+    btn.onclick = () => assignPartOfSpeech(abbrev);
+    opts.appendChild(btn);
+  });
+  userAnswers.monday = new Array(data.monday?.words?.length || 0).fill(null);
+}
+
+function loadTuesday(data) {
+  renderWords('sentence-tuesday', data.tuesday?.words || [], 'tuesday');
+  const opts = document.getElementById('sentence-parts-options');
+  opts.innerHTML = '';
+  Object.entries(sentencePartsAbbrev).forEach(([abbrev, full]) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<strong>${abbrev}</strong><small>${full}</small>`;
+    btn.onclick = () => assignSentencePart(abbrev);
+    opts.appendChild(btn);
+  });
+  userAnswers.tuesday = new Array(data.tuesday?.words?.length || 0).fill(null);
+}
+
+function loadWednesday(data) {
+  // Always show raw (uncapitalized, unpunctuated) version
+  document.getElementById('sentence-wednesday').textContent = data.sentenceRaw || '';
+  resetDay('wednesday');
+}
+
+function loadThursday(data) {
+  document.getElementById('unpunctuated-sentence').textContent = data.thursday?.unpunctuated || data.sentenceRaw || '';
+  document.getElementById('punctuation-input').value = '';
+}
+
+function loadFriday(data) {
+  document.getElementById('reference-sentence').textContent = data.sentenceCorrect || data.sentenceRaw || '';
+  clearCanvas();
+  document.getElementById('example-diagram').classList.add('hidden');
+}
+
+function selectWord(index, day) {
+  document.querySelectorAll(`#sentence-${day} .word`).forEach(w => w.classList.remove('selected'));
+  const el = document.querySelector(`#sentence-${day} .word[data-index="${index}"]`);
+  if (el) {
+    el.classList.add('selected');
+    selectedWord = index;
+  }
+}
+
+function assignPartOfSpeech(pos) {
+  if (selectedWord === null) return;
+  userAnswers.monday[selectedWord] = pos;
+  const wordEl = document.querySelector(`#sentence-monday .word[data-index="${selectedWord}"]`);
+  wordEl.querySelector('.label')?.remove();
+  const label = document.createElement('span');
+  label.className = 'label';
+  label.textContent = pos;
+  wordEl.appendChild(label);
+}
+
+function assignSentencePart(part) {
+  if (selectedWord === null) return;
+  userAnswers.tuesday[selectedWord] = part;
+  const wordEl = document.querySelector(`#sentence-tuesday .word[data-index="${selectedWord}"]`);
+  wordEl.querySelector('.label')?.remove();
+  const label = document.createElement('span');
+  label.className = 'label';
+  label.textContent = part;
+  wordEl.appendChild(label);
+}
+
+// Wednesday selection (using data attributes)
+document.querySelectorAll('[data-type]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedType = btn.dataset.type;
+    userAnswers.wednesday = userAnswers.wednesday || {};
+    userAnswers.wednesday.sentenceType = selectedType;
+    document.querySelectorAll('[data-type]').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  });
+});
+
+document.querySelectorAll('[data-purpose]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedPurpose = btn.dataset.purpose;
+    userAnswers.wednesday = userAnswers.wednesday || {};
+    userAnswers.wednesday.purpose = selectedPurpose;
+    document.querySelectorAll('[data-purpose]').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  });
+});
+
+function checkAnswers(day) {
+  const data = sentenceData[currentWeek] || {};
+  let feedback = '';
+
+  switch(day) {
+    case 'monday': {
+      let correct = 0;
+      (data.monday?.words || []).forEach((_, i) => {
+        const el = document.querySelector(`#sentence-monday .word[data-index="${i}"]`);
+        el?.classList.remove('correct','incorrect');
+        if (userAnswers.monday?.[i] === data.monday?.answers?.[i]) {
+          el?.classList.add('correct');
+          correct++;
+        } else if (userAnswers.monday?.[i] !== null) {
+          el?.classList.add('incorrect');
         }
+      });
+      const total = data.monday?.words?.length || 0;
+      const pct = total ? Math.round((correct / total) * 100) : 0;
+      if (correct === total && total > 0) {
+        feedback = `<div class="feedback success">🎉 Perfect! All ${total} correct!</div>`;
+      } else if (pct >= 70) {
+        feedback = `<div class="feedback partial">Good effort — ${correct}/${total} (${pct}%)</div>`;
+      } else {
+        feedback = `<div class="feedback error">Keep practicing — ${correct}/${total} (${pct}%)</div>`;
+      }
+      break;
     }
 
-    function checkAnswers() {
-        const feedback = document.getElementById('feedback');
-        feedback.className = 'feedback success';
-        feedback.textContent = "Answers Checked (Simulation)";
-        feedback.classList.remove('hidden');
+    case 'tuesday': {
+      let correct = 0;
+      (data.tuesday?.words || []).forEach((_, i) => {
+        const el = document.querySelector(`#sentence-tuesday .word[data-index="${i}"]`);
+        el?.classList.remove('correct','incorrect');
+        if (userAnswers.tuesday?.[i] === data.tuesday?.answers?.[i]) {
+          el?.classList.add('correct');
+          correct++;
+        } else if (userAnswers.tuesday?.[i] !== null) {
+          el?.classList.add('incorrect');
+        }
+      });
+      const total = data.tuesday?.words?.length || 0;
+      feedback = correct === total && total > 0
+        ? `<div class="feedback success">🎉 Excellent! All sentence parts correct!</div>`
+        : `<div class="feedback partial">${correct}/${total} correct.</div>`;
+      break;
     }
 
-    function resetDay() { studentAnswers = {}; selectedWordIdx = null; renderSentence(); }
-    function toggleEditMode() { alert("Edit Mode Toggled"); }
-    function changeWeek() { currentWeek = document.getElementById('week-select').value; renderSentence(); }
+    case 'wednesday': {
+      const typeOk = userAnswers.wednesday?.sentenceType === data.wednesday?.sentenceType;
+      const purpOk = userAnswers.wednesday?.purpose === data.wednesday?.purpose;
+      if (typeOk && purpOk) {
+        feedback = `<div class="feedback success">🎉 Perfect! Type: ${data.wednesday?.sentenceType || '—'}, Purpose: ${data.wednesday?.purpose || '—'}</div>`;
+      } else if (typeOk) {
+        feedback = `<div class="feedback partial">Good — type is correct, check purpose.</div>`;
+      } else if (purpOk) {
+        feedback = `<div class="feedback partial">Good — purpose is correct, check type.</div>`;
+      } else {
+        feedback = `<div class="feedback error">Review: ${data.wednesday?.sentenceType || '?'} / ${data.wednesday?.purpose || '?'}</div>`;
+      }
+      break;
+    }
+
+    case 'thursday': {
+      const user = document.getElementById('punctuation-input').value;
+      const correct = data.thursday?.correct || data.sentenceCorrect || '';
+      if (normalize(user) === normalize(correct)) {
+        feedback = `<div class="feedback success">🎉 Perfect punctuation & capitalization!</div>`;
+      } else {
+        feedback = `<div class="feedback error">Not quite — check caps, commas, quotes, period.</div>`;
+      }
+      break;
+    }
+  }
+
+  document.getElementById(`feedback-${day}`).innerHTML = feedback;
+}
+
+function showAnswers(day) {
+  const data = sentenceData[currentWeek] || {};
+  switch(day) {
+    case 'monday':
+      (data.monday?.answers || []).forEach((ans, i) => {
+        userAnswers.monday[i] = ans;
+        const el = document.querySelector(`#sentence-monday .word[data-index="${i}"]`);
+        el?.classList.remove('incorrect','selected');
+        el?.classList.add('correct');
+        el?.querySelector('.label')?.remove();
+        const lbl = document.createElement('span');
+        lbl.className = 'label';
+        lbl.textContent = ans;
+        el?.appendChild(lbl);
+      });
+      break;
+
+    case 'tuesday':
+      (data.tuesday?.labels || data.tuesday?.answers || []).forEach((lbl, i) => {
+        userAnswers.tuesday[i] = lbl;
+        const el = document.querySelector(`#sentence-tuesday .word[data-index="${i}"]`);
+        el?.classList.remove('incorrect','selected');
+        el?.classList.add('correct');
+        el?.querySelector('.label')?.remove();
+        const span = document.createElement('span');
+        span.className = 'label';
+        span.textContent = lbl;
+        el?.appendChild(span);
+      });
+      break;
+
+    case 'wednesday':
+      if (data.wednesday?.sentenceType) {
+        document.querySelector(`[data-type="${data.wednesday.sentenceType}"]`)?.classList.add('selected');
+      }
+      if (data.wednesday?.purpose) {
+        document.querySelector(`[data-purpose="${data.wednesday.purpose}"]`)?.classList.add('selected');
+      }
+      break;
+
+    case 'thursday':
+      document.getElementById('punctuation-input').value = data.thursday?.correct || data.sentenceCorrect || '';
+      break;
+
+    case 'friday':
+      document.getElementById('example-diagram').classList.remove('hidden');
+      document.getElementById('diagram-example-text').textContent = data.friday?.diagramDescription || 'No example available yet.';
+      break;
+  }
+  document.getElementById(`feedback-${day}`).innerHTML = `<div class="feedback success">✅ Answers revealed!</div>`;
+}
+
+function resetDay(day) {
+  switch(day) {
+    case 'monday':
+      document.querySelectorAll('#sentence-monday .word').forEach(w => {
+        w.classList.remove('correct','incorrect','selected');
+        w.querySelector('.label')?.remove();
+      });
+      userAnswers.monday = new Array(sentenceData[currentWeek]?.monday?.words?.length || 0).fill(null);
+      break;
+    case 'tuesday':
+      document.querySelectorAll('#sentence-tuesday .word').forEach(w => {
+        w.classList.remove('correct','incorrect','selected');
+        w.querySelector('.label')?.remove();
+      });
+      userAnswers.tuesday = new Array(sentenceData[currentWeek]?.tuesday?.words?.length || 0).fill(null);
+      break;
+    case 'wednesday':
+      document.querySelectorAll('[data-type],[data-purpose]').forEach(b => b.classList.remove('selected'));
+      userAnswers.wednesday = {};
+      break;
+    case 'thursday':
+      document.getElementById('punctuation-input').value = '';
+      break;
+    case 'friday':
+      clearCanvas();
+      document.getElementById('example-diagram').classList.add('hidden');
+      break;
+  }
+  document.getElementById(`feedback-${day}`).innerHTML = '';
+  selectedWord = null;
+}
+
+function toggleEditMode() {
+  editMode = !editMode;
+  document.getElementById('edit-panel').classList.toggle('hidden', !editMode);
+  if (editMode) loadEditPanel();
+}
+
+function loadEditPanel() {
+  const d = sentenceData[currentWeek] || createEmptyWeek();
+  document.getElementById('edit-week-num').textContent = currentWeek;
+  document.getElementById('edit-sentence-raw').value     = d.sentenceRaw || '';
+  document.getElementById('edit-sentence-correct').value = d.sentenceCorrect || '';
+  document.getElementById('edit-monday').value           = (d.monday?.answers || []).join(', ');
+  document.getElementById('edit-tuesday-phrases').value  = (d.tuesday?.words || []).join(' | ');
+  document.getElementById('edit-tuesday-labels').value   = (d.tuesday?.labels || d.tuesday?.answers || []).join(', ');
+  document.getElementById('edit-sentence-type').value    = d.wednesday?.sentenceType || 'simple';
+  document.getElementById('edit-purpose').value          = d.wednesday?.purpose || 'declarative';
+}
+
+function saveWeekData() {
+  const raw    = document.getElementById('edit-sentence-raw').value.trim();
+  const corr   = document.getElementById('edit-sentence-correct').value.trim();
+  if (!raw || !corr) return alert('Please fill in both sentence fields.');
+
+  const words  = raw.split(/\s+/).filter(Boolean);
+  const monAns = document.getElementById('edit-monday').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const tuePhr = document.getElementById('edit-tuesday-phrases').value.split('|').map(s=>s.trim()).filter(Boolean);
+  const tueLbl = document.getElementById('edit-tuesday-labels').value.split(',').map(s=>s.trim()).filter(Boolean);
+
+  if (monAns.length !== words.length) {
+    if (!confirm(`Monday answers (${monAns.length}) don't match word count (${words.length}). Save anyway?`)) return;
+  }
+
+  sentenceData[currentWeek] = {
+    sentenceRaw: raw,
+    sentenceCorrect: corr,
+    monday:    { words, answers: monAns },
+    tuesday:   { words: tuePhr, answers: tueLbl, labels: tueLbl },
+    wednesday: { sentenceType: document.getElementById('edit-sentence-type').value, purpose: document.getElementById('edit-purpose').value },
+    thursday:  { unpunctuated: raw, correct: corr },
+    friday:    { diagramDescription: "Diagram this sentence yourself — example not provided yet." }
+  };
+
+  saveSentenceData();
+  alert(`Week ${currentWeek} saved!`);
+  loadWeek(currentWeek);
+}
+
+function createEmptyWeek() {
+  return {
+    sentenceRaw: "", sentenceCorrect: "",
+    monday: { words: [], answers: [] },
+    tuesday: { words: [], answers: [], labels: [] },
+    wednesday: { sentenceType: "simple", purpose: "declarative" },
+    thursday: { unpunctuated: "", correct: "" },
+    friday: { diagramDescription: "" }
+  };
+}
+
+function setupEventListeners() {
+  document.querySelectorAll('.day-tab').forEach(tab => {
+    tab.addEventListener('click', () => switchDay(tab.dataset.day));
+  });
+}
 </script>
 </body>
 </html>
