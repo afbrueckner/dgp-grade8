@@ -3,59 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DGP Interactive - Grade 8</title>
+    <title>Daily Grammar Practice - Interactive (Grade 8)</title>
     <style>
-        /* Restoring the original professional look */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            position: relative;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; position: relative; }
         .header h1 { font-size: 2.5em; margin-bottom: 10px; }
-        .controls {
-            display: flex; gap: 20px; padding: 25px 30px;
-            background: #f8f9fa; border-bottom: 2px solid #e9ecef;
-            align-items: center;
-        }
-        .day-tabs { display: flex; padding: 0 30px; background: #f8f9fa; border-bottom: 3px solid #dee2e6; }
-        .day-tab {
-            padding: 15px 25px; background: transparent; border: none;
-            font-size: 1em; font-weight: 600; cursor: pointer; color: #6c757d;
-            border-bottom: 3px solid transparent; transition: all 0.3s;
-        }
+        .edit-mode-toggle { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: 2px solid white; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .controls { display: flex; gap: 20px; padding: 25px 30px; background: #f8f9fa; border-bottom: 2px solid #e9ecef; flex-wrap: wrap; align-items: center; }
+        .day-tabs { display: flex; gap: 0; padding: 0 30px; background: #f8f9fa; border-bottom: 3px solid #dee2e6; overflow-x: auto; }
+        .day-tab { padding: 15px 25px; background: transparent; border: none; font-size: 1em; font-weight: 600; cursor: pointer; color: #6c757d; border-bottom: 3px solid transparent; }
         .day-tab.active { color: #667eea; border-bottom-color: #667eea; }
         .content { padding: 40px; }
-        .sentence-display {
-            background: #f8f9fa; padding: 30px; border-radius: 10px;
-            margin-bottom: 30px; border-left: 5px solid #667eea;
-        }
-        .word {
-            display: inline-block; padding: 8px 12px; background: white;
-            border: 2px solid #dee2e6; border-radius: 6px; cursor: pointer;
-            margin: 5px; transition: all 0.3s;
-        }
+        .sentence-display { background: #f8f9fa; padding: 30px; border-radius: 10px; margin-bottom: 30px; border-left: 5px solid #667eea; }
+        .sentence { font-size: 1.5em; line-height: 2.5; color: #212529; display: flex; flex-wrap: wrap; gap: 8px; }
+        .word { padding: 8px 12px; background: white; border: 2px solid #dee2e6; border-radius: 6px; cursor: pointer; margin-top: 30px; position: relative; }
         .word.selected { background: #667eea; color: white; }
-        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
-        .btn-success { background: #28a745; color: white; }
+        .options-panel { background: white; border: 2px solid #dee2e6; border-radius: 10px; padding: 25px; margin-bottom: 25px; }
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+        .option-btn { padding: 12px 20px; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; cursor: pointer; }
+        .btn { padding: 12px 30px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .btn-primary { background: #667eea; color: white; }
+        .btn-success { background: #28a745; color: white; }
         .hidden { display: none; }
+        canvas { border: 2px solid #dee2e6; border-radius: 8px; background: white; display: block; margin: 20px auto; }
     </style>
 </head>
 <body>
@@ -63,93 +35,99 @@
         <div class="header">
             <h1>📚 Daily Grammar Practice</h1>
             <p>Interactive Grammar Exercises - Grade 8</p>
-            <button class="btn" style="position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.2); color:white; border:1px solid white;" onclick="toggleEditMode()">✏️ Edit Mode</button>
+            <button class="edit-mode-toggle" onclick="toggleEditMode()">✏️ Edit Sentences</button>
         </div>
 
         <div class="controls">
-            <div>
-                <label>Week:</label>
+            <div class="control-group">
+                <label for="week-select">Week:</label>
                 <select id="week-select" onchange="changeWeek()"></select>
-            </div>
-            <div style="margin-left: auto;">
-                <button class="btn btn-success" onclick="exportStudentReport()">📥 Download Turn-In Report</button>
             </div>
         </div>
 
         <div class="day-tabs">
-            <button class="day-tab active" onclick="switchDay('monday')">Monday</button>
-            <button class="day-tab" onclick="switchDay('tuesday')">Tuesday</button>
-            <button class="day-tab" onclick="switchDay('wednesday')">Wednesday</button>
-            <button class="day-tab" onclick="switchDay('thursday')">Thursday</button>
-            <button class="day-tab" onclick="switchDay('friday')">Friday</button>
+            <button class="day-tab active" data-day="monday" onclick="setDay('monday')">Monday</button>
+            <button class="day-tab" data-day="tuesday" onclick="setDay('tuesday')">Tuesday</button>
+            <button class="day-tab" data-day="wednesday" onclick="setDay('wednesday')">Wednesday</button>
+            <button class="day-tab" data-day="thursday" onclick="setDay('thursday')">Thursday</button>
+            <button class="day-tab" data-day="friday" onclick="setDay('friday')">Friday</button>
         </div>
 
         <div class="content">
-            <div id="exercise-content">
+            <div id="monday-content" class="day-content">
                 <div class="sentence-display">
-                    <h3 id="day-instruction">Monday: Parts of Speech</h3>
-                    <div id="sentence-container" style="font-size: 1.5em; margin-top: 20px;"></div>
+                    <h3>Monday's Sentence:</h3>
+                    <div class="sentence" id="sentence-monday"></div>
                 </div>
-                <div id="options-panel" class="sentence-display">
-                    <h4>Select Answer:</h4>
-                    <div id="options-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 15px;"></div>
+                <div class="options-panel">
+                    <div class="options-grid" id="pos-options"></div>
                 </div>
+                <button class="btn btn-primary" onclick="checkAnswers('monday')">Check Answers</button>
+            </div>
+            
+            <div id="friday-content" class="day-content hidden">
+                <canvas id="diagram-canvas" width="800" height="400"></canvas>
             </div>
         </div>
     </div>
 
     <script>
-        // CONFIG - Replace with your Gist Raw URL later
-        const GITHUB_GIST_URL = ""; 
-
-        let state = {
-            currentWeek: 1,
-            currentDay: 'monday',
-            data: {
-                1: {
-                    sentenceRaw: "he was a very silent man by custom",
-                    monday: {
-                        words: ["he", "was", "a", "very", "silent", "man", "by", "custom"],
-                        answers: ["Pronoun", "Verb", "Adjective", "Adverb", "Adjective", "Noun", "Preposition", "Noun"]
-                    }
+        let sentenceData = {
+            1: {
+                sentenceRaw: "he was a very silent man by custom",
+                monday: {
+                    words: ["he", "was", "a", "very", "silent", "man", "by", "custom"],
+                    answers: ["pron pro", "lv", "art", "adv", "adj", "N", "prep", "op"]
                 }
-            },
-            progress: {}
+            }
         };
 
-        function switchDay(day) {
-            document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            state.currentDay = day;
-            renderExercise();
+        let currentWeek = 1;
+        let currentDay = 'monday';
+
+        // Wait for page load
+        window.onload = function() {
+            populateWeekSelector();
+            loadWeek(1);
+        };
+
+        function populateWeekSelector() {
+            const sel = document.getElementById('week-select');
+            for (let week in sentenceData) {
+                let opt = document.createElement('option');
+                opt.value = week;
+                opt.textContent = "Week " + week;
+                sel.appendChild(opt);
+            }
         }
 
-        function renderExercise() {
-            const container = document.getElementById('sentence-container');
-            const weekData = state.data[state.currentWeek];
+        function loadWeek(week) {
+            currentWeek = week;
+            renderSentence();
+        }
+
+        function renderSentence() {
+            const container = document.getElementById('sentence-monday');
+            if(!container) return;
             container.innerHTML = '';
-            
-            weekData[state.currentDay].words.forEach((word, i) => {
-                const span = document.createElement('span');
+            sentenceData[currentWeek].monday.words.forEach(word => {
+                let span = document.createElement('span');
                 span.className = 'word';
                 span.textContent = word;
                 container.appendChild(span);
             });
         }
 
-        // Initialize
-        window.onload = () => {
-            const sel = document.getElementById('week-select');
-            Object.keys(state.data).forEach(w => {
-                const opt = document.createElement('option');
-                opt.value = w; opt.textContent = "Week " + w;
-                sel.appendChild(opt);
-            });
-            renderExercise();
-        };
+        function setDay(day) {
+            document.querySelectorAll('.day-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[data-day="${day}"]`).classList.add('active');
+            document.getElementById(`${day}-content`).classList.remove('hidden');
+        }
 
-        function toggleEditMode() { alert("Edit mode coming soon in sync with Gist!"); }
-        function exportStudentReport() { alert("Report generated!"); }
+        function toggleEditMode() { alert("Edit mode activated."); }
+        function changeWeek() { loadWeek(document.getElementById('week-select').value); }
+        function checkAnswers(day) { alert("Checking " + day); }
     </script>
 </body>
 </html>
